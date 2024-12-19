@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 .env.local
 .env
-createClient.jsx
+src/createClient.jsx
