@@ -28,22 +28,42 @@ const App = () => {
       setUser(prevFormData=>{
         return{
           ...prevFormData,
-        [ e.target.name]:e.target.value,
+        [ e.target.name]:e.target.value, 
         }
       }) 
   }
 
-  async function AddUser() {
+  async function addUser() {
     await supabase
            .from('users')
            .insert({name:user.name,age:user.age})
+    fetchUsers();
   }
+
+  async function deleteUser(userId) {
+    const {data,error} = await supabase
+            .from('users')
+            .delete()
+            .eq('id',userId)   
+
+    fetchUsers();
+      
+    if(error){
+        console.log(error);      
+    }
+    if(data){
+       console.log(data);
+    }
+        
+  }
+
+
   return (
     <div className="p-4">
   
 
     {/* Add User Form */}
-    <form onSubmit={AddUser} className="mb-4">
+    <form onSubmit={addUser} className="mb-4">
       <div className="flex flex-col gap-4 mb-4">
         <input
           type="text"
@@ -84,6 +104,7 @@ const App = () => {
             <th className="border border-gray-200 px-4 py-2 text-sm font-medium">ID</th>
             <th className="border border-gray-200 px-4 py-2 text-sm font-medium">Name</th>
             <th className="border border-gray-200 px-4 py-2 text-sm font-medium">Age</th>
+            <th className="border border-gray-200 px-4 py-2 text-sm font-medium">Actions</th>
             
           </tr>
         </thead>
@@ -96,6 +117,14 @@ const App = () => {
               <td className="border border-gray-200 px-4 py-2 text-sm">{user.id}</td>
               <td className="border border-gray-200 px-4 py-2 text-sm">{user.Name}</td>
               <td className="border border-gray-200 px-4 py-2 text-sm">{user.Age}</td>
+              <td className="border border-gray-200 px-4 py-2 text-sm">
+                    <button
+                      className="px-2 py-1 text-white bg-red-500 rounded hover:bg-red-600"
+                      onClick={()=>(deleteUser(user.id))}
+                    >
+                      Delete
+                    </button>
+                  </td>
             </tr>
           ))}
         </tbody>
